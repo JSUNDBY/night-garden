@@ -77,12 +77,24 @@ function setup() {
     if (!awaitingClick) return;
     awaitingClick = false;
     try { initAudio(); } catch (e) { console.error('Audio init error:', e); }
-    for (let i = 0; i < 6; i++) spawnPlant();
-    for (let i = 0; i < 4; i++) spawnFlower();
-    for (let i = 0; i < 3; i++) spawnMushroom();
-    for (let i = 0; i < 40; i++) spawnFirefly();
-    for (let i = 0; i < 3; i++) spawnMoth();
-    for (let i = 0; i < 4; i++) spawnEnergyVein();
+    // Stagger spawns so audio doesn't blast all at once
+    for (let i = 0; i < 40; i++) spawnFirefly(); // silent
+    for (let i = 0; i < 3; i++) spawnMoth();     // silent
+    for (let i = 0; i < 4; i++) spawnEnergyVein(); // silent
+    // Plants/flowers/mushrooms play notes — stagger them
+    setTimeout(() => spawnPlant(), 500);
+    setTimeout(() => spawnPlant(), 2000);
+    setTimeout(() => spawnPlant(), 4000);
+    setTimeout(() => spawnPlant(), 6000);
+    setTimeout(() => spawnPlant(), 9000);
+    setTimeout(() => spawnPlant(), 12000);
+    setTimeout(() => spawnFlower(), 1500);
+    setTimeout(() => spawnFlower(), 3500);
+    setTimeout(() => spawnFlower(), 7000);
+    setTimeout(() => spawnFlower(), 10000);
+    setTimeout(() => spawnMushroom(), 3000);
+    setTimeout(() => spawnMushroom(), 6500);
+    setTimeout(() => spawnMushroom(), 11000);
   }
 
   document.addEventListener('touchstart', startGarden, { passive: true });
@@ -1309,7 +1321,8 @@ function initAudio() {
     compressor.connect(audioCtx.destination);
 
     masterGain = audioCtx.createGain();
-    masterGain.gain.setValueAtTime(0.45, audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 8);
 
     dryGain = audioCtx.createGain();
     dryGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
@@ -1325,7 +1338,7 @@ function initAudio() {
     let convolver = audioCtx.createConvolver();
     convolver.buffer = ir;
     wetGain = audioCtx.createGain();
-    wetGain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+    wetGain.gain.setValueAtTime(0.5, audioCtx.currentTime);
 
     delayNode = audioCtx.createDelay(3.0);
     delayNode.delayTime.setValueAtTime(1.5, audioCtx.currentTime);
@@ -1401,8 +1414,8 @@ function playNote(note, velocity) {
   filter.Q.setValueAtTime(0.5, now);
   let voiceGain = audioCtx.createGain();
   voiceGain.gain.setValueAtTime(0.001, now);
-  voiceGain.gain.linearRampToValueAtTime(vel * 0.12, now + 2.5);
-  voiceGain.gain.exponentialRampToValueAtTime(Math.max(vel * 0.08, 0.001), now + 7);
+  voiceGain.gain.linearRampToValueAtTime(vel * 0.07, now + 3);
+  voiceGain.gain.exponentialRampToValueAtTime(Math.max(vel * 0.05, 0.001), now + 8);
   let c2Gain = audioCtx.createGain();
   c2Gain.gain.setValueAtTime(0.4, now);
   carrier2.connect(c2Gain);
@@ -1496,12 +1509,22 @@ function keyPressed() {
   if (awaitingClick && (key === ' ' || key === 'Enter')) {
     awaitingClick = false;
     try { initAudio(); } catch (e) {}
-    for (let i = 0; i < 6; i++) spawnPlant();
-    for (let i = 0; i < 4; i++) spawnFlower();
-    for (let i = 0; i < 3; i++) spawnMushroom();
     for (let i = 0; i < 40; i++) spawnFirefly();
     for (let i = 0; i < 3; i++) spawnMoth();
     for (let i = 0; i < 4; i++) spawnEnergyVein();
+    setTimeout(() => spawnPlant(), 500);
+    setTimeout(() => spawnPlant(), 2000);
+    setTimeout(() => spawnPlant(), 4000);
+    setTimeout(() => spawnPlant(), 6000);
+    setTimeout(() => spawnPlant(), 9000);
+    setTimeout(() => spawnPlant(), 12000);
+    setTimeout(() => spawnFlower(), 1500);
+    setTimeout(() => spawnFlower(), 3500);
+    setTimeout(() => spawnFlower(), 7000);
+    setTimeout(() => spawnFlower(), 10000);
+    setTimeout(() => spawnMushroom(), 3000);
+    setTimeout(() => spawnMushroom(), 6500);
+    setTimeout(() => spawnMushroom(), 11000);
     return false;
   }
   return false;
